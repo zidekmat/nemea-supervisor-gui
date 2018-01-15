@@ -1,27 +1,56 @@
 <template>
   <v-card>
-  <v-layout row v-for="(key, obj) in conf" :key="row.key">
+  <v-layout
+    row
+    v-show="('cond' in obj) ? obj.cond(conf) : true"
+    v-for="(obj, key) in conf"
+    :key="key"
+  >
     <v-flex xs-4>
-      <v-switch
-        v-if="obj.val == 'boolean'"
-        :label="humanLabel(obj, name)"
-        v-model="obj.val">
-      </v-switch>
-      <v-text-field
-        v-else-if="typeof row.val == 'number'"
-        :label="row.label"
-        :id="row.key"
-        type="number"
-        v-model="row.val">
-      </v-text-field>
-      <v-text-field
-        v-else
-        :label="row.label"
-        :id="row.key"
-        v-model="row.val">
-      </v-text-field>
+      <v-tooltip 
+        bottom 
+      >
+        <v-switch
+          v-if="obj.type == 'boolean'"
+          :label="humanLabel(obj, key)"
+          slot="activator"
+          v-model="obj.val">
+        </v-switch>
+        <v-text-field
+          v-else-if="obj.type == 'integer'"
+          :label="humanLabel(obj, key)"
+          type="number"
+          slot="activator"
+          v-model="obj.val">
+        </v-text-field>
+        <v-text-field
+          v-else-if="obj.type == 'string'"
+          :label="humanLabel(obj, key)"
+          :rules="[
+            () => { return (new RegExp(obj.pattern)).test(obj.val) || `Value not matching pattern ${obj.pattern}` }
+          ]"
+          slot="activator"
+          v-model="obj.val">
+        </v-text-field>
+        <v-select
+          v-else-if="obj.type == 'enum'"
+          :items="obj.enumVals"
+          v-model="obj.val"
+          :label="humanLabel(obj, key)"
+          slot="activator"
+          single-line
+          bottom
+        ></v-select>
+        <span>{{ obj.description }}</span>
+      </v-tooltip>
     </v-flex>
-    <v-flex xs-8></v-flex>
+    <v-flex xs-8 mt-4>
+      <v-tooltip 
+        right 
+      >
+        <v-icon medium>info</v-icon>        
+      </v-tooltip>
+    </v-flex>
   </v-layout>
   <v-layout row>
     <v-flex xs-8></v-flex>
@@ -42,6 +71,16 @@ export default {
       // TODO endpoint to fetch data/validations should be here
       //      + endpoint to update data
       conf: this.mocked.conf,
+      rules: {
+        pattern: (obj) => {
+          console.log(obj)
+          //if ( !('pattern' in obj)) {
+          //  return true;          
+          //}
+          const regex = new RegExp(obj.pattern)
+          return (new RegExp(obj.pattern)).test(obj.val) || `Value not matching pattern ${obj.pattern}`
+        },
+      },
     }
   },
   computed: {
