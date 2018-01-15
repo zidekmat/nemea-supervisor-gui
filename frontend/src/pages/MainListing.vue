@@ -18,13 +18,18 @@ export default {
   data () {
     return {
       items: [],
-      mocked: {listItems: this.items}
+      mocked: {
+        listItems: this.items,
+        headers: [
+          {text: "Name", sortable: true, value: "name", align: "left"},
+          {sortable: true, value: "enabled", align: "left"},
+        ]
+      }
     }
   },
   methods: { 
     refetchItems: function () {
-      console.log(`refetching for route ${this.$route.path}`)
-       if (this.$route.path == '/module-groups') {
+      if (this.$route.path == '/module-groups') {
         this.mocked.listItems= [
           {name: "Group 1", enabled: true, path: "/conf/Group 1"},
           {name: "Group 3", enabled: true, path: "/conf/Group 3"},
@@ -46,7 +51,6 @@ export default {
           {name: "Instance 4", enabled: true, path: "/conf/Group 4/Module 4/Instance 4"},
         ];
       }
-      console.log(this.mocked.items[0].name);
     }
   },
   computed: {

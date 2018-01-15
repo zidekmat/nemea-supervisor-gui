@@ -2,7 +2,7 @@
   <v-container grid-list-md class="mt-0 ml-0 mr-0">
     <v-toolbar color="deep-purple darken-3">
       <v-breadcrumbs>
-        <v-icon slot="divider">chevron_right</v-icon>
+        <v-icon slot="divider" :disabled="true">chevron_right</v-icon>
         <v-breadcrumbs-item 
           v-for="node in treePath" :key="node.text" :to="node.path" :disabled="false"
         >
@@ -15,7 +15,7 @@
       <v-toolbar-items>
         <!-- conditional based on component state -->
         <v-btn flat >{{ controlAction }}</v-btn>
-        <v-btn flat >export configuration</v-btn>
+        <v-btn flat >remove</v-btn>
       </v-toolbar-items>
     </v-toolbar>
 
@@ -23,6 +23,9 @@
       <v-tabs-bar class="deep-purple darken-3">
         <v-tabs-item href="#tabConf" >
           Configuration
+        </v-tabs-item>
+        <v-tabs-item href="#tabXmlConf" >
+          XML Configuration
         </v-tabs-item>
         <v-tabs-item href="#tabChildren" v-if="tabs.labels.children != null">
           {{ tabs.labels.children }}
@@ -35,27 +38,20 @@
 
       <v-tabs-items>
         <v-tabs-content id="tabConf">
-          <conf-form-component :mocked="{conf: conf}"></conf-form-component>
+          <conf-form-component :mocked="hereMockedConf"></conf-form-component>
+        </v-tabs-content>
+
+        <v-tabs-content id="tabXmlConf">
+          <conf-xml-form-component :mocked="hereMockedXmlConf"></conf-xml-form-component>
         </v-tabs-content>
 
         <v-tabs-content v-if="tabs.labels.children != null" id="tabChildren">
-          <conf-listing-component :mocked="{items:items}"></conf-listing-component>
+          <conf-listing-component :mocked="hereMockedList"></conf-listing-component>
         </v-tabs-content>
 
         <v-tabs-content v-if="tabs.labels.addNew != null" id="tabAddNew">
           <v-card flat>
-            <!--
-            <v-data-table v-bind:headers="headers" :items="items" hide-actions>
-              <template slot="items" slot-scope="props">
-                <td>{{ props.item.name }}</td>
-                <td class="text-xs-right">{{ enabledToString(props.item.enabled) }}</td>
-                <td class="text-xs-right"><v-btn>Export</v-btn></td>
-                <td class="text-xs-right">
-                  <v-btn color="primary" :to="props.item.path">View/Edit</v-btn>
-                </td>
-              </template>
-            </v-data-table>
-            -->
+            <conf-form-component :mocked="hereMockedAddNewConf"></conf-form-component>
           </v-card>
         </v-tabs-content>
 
@@ -71,8 +67,23 @@ export default {
   props: ['mocked'],
   data () {
     return {
-      conf: this.mocked.conf,
-      items: this.mocked.items,
+      hereMockedConf: {
+        conf: this.mocked.conf,
+      },
+      hereMockedXmlConf: {
+        conf: `
+              <?xml version="1.0">
+                <test></test>
+              `,
+        schema: "blabla"
+      },
+      hereMockedList: {
+        listItems: this.mocked.listItems,
+        headers: this.mocked.headers,
+      },
+      hereMockedAddNewConf: {
+        conf: this.mocked.addNewConf
+      },
       tabs: {
         labels: {
           children: this.mocked.tabs.labels.children,
@@ -87,6 +98,7 @@ export default {
         {text: this.$route.params.group, path: '/conf/' + this.$route.params.group},
         {text: this.$route.params.module, path: '/conf/' + this.$route.params.group + '/' + this.$route.params.module},
         {text: this.$route.params.instance, path: '/conf/' + this.$route.params.group + '/' + this.$route.params.module + '/' + this.$route.params.instance},
+        {text: this.$route.params.ifc, path: '/conf/' + this.$route.params.group + '/' + this.$route.params.module + '/' + this.$route.params.instance + '/' + this.$route.params.ifc},
       ].filter(x => x.text != null)
     },
     controlAction: function () {

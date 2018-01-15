@@ -1,11 +1,11 @@
 <template>
   <v-card>
-  <v-layout row v-for="row in conf" :key="row.key">
+  <v-layout row v-for="(key, obj) in conf" :key="row.key">
     <v-flex xs-4>
       <v-switch
-        v-if="typeof row.val == 'boolean'"
-        :label="row.label"
-        v-model="row.val">
+        v-if="obj.val == 'boolean'"
+        :label="humanLabel(obj, name)"
+        v-model="obj.val">
       </v-switch>
       <v-text-field
         v-else-if="typeof row.val == 'number'"
@@ -14,7 +14,6 @@
         type="number"
         v-model="row.val">
       </v-text-field>
-
       <v-text-field
         v-else
         :label="row.label"
@@ -23,7 +22,13 @@
       </v-text-field>
     </v-flex>
     <v-flex xs-8></v-flex>
-  </v-layout row>
+  </v-layout>
+  <v-layout row>
+    <v-flex xs-8></v-flex>
+    <v-flex xs-4>
+      <v-btn>Save</v-btn>
+    </v-flex>
+  </v-layout>
   </v-card>
 </template>
 
@@ -42,6 +47,9 @@ export default {
   computed: {
   },
   methods: { 
+    humanLabel: function (obj, key) {
+      return ('label' in obj) ? obj.label : (key.charAt(0).toUpperCase() + key.slice(1))
+    }
   },
   mounted () {},
   created () {

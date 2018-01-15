@@ -3,11 +3,10 @@ import Router from 'vue-router'
 import Main from './pages/Main.vue'
 import Home from './pages/Home.vue'
 import MainListing from './pages/MainListing.vue'
-import ModuleGroups from './pages/ModuleGroups.vue'
-import Modules from './pages/Modules.vue'
-import ConfModuleGroup from './pages/ConfModuleGroup.vue'
-import ConfModule from './pages/ConfModule.vue'
-import ConfInstance from './pages/ConfInstance.vue'
+import ConfModuleGroup from './pages/conf/ModuleGroup.vue'
+import ConfModule from './pages/conf/Module.vue'
+import ConfInstance from './pages/conf/Instance.vue'
+import ConfInterface from './pages/conf/Interface.vue'
 
 function route (path, file, name, children) {
   return {
@@ -23,7 +22,7 @@ Vue.use(Router)
 
 const router = new Router({
   base: __dirname,
-  //mode: 'history',
+  //mode: 'history', TODO
   scrollBehavior: () => ({ y: 0 }),
   routes: [
     {
@@ -31,10 +30,11 @@ const router = new Router({
       	{path: '/', component: Home},
       	{path: '/module-groups', component: MainListing},
       	{path: '/modules', component: MainListing},
-      	{path: '/Instances', component: MainListing},
-        {path: '/conf/:group', component: ConfModuleGroup}, //, children: [
+      	{path: '/instances', component: MainListing},
+        {path: '/conf/:group', component: ConfModuleGroup},
         {path: '/conf/:group/:module', component: ConfModule},
         {path: '/conf/:group/:module/:instance', component: ConfInstance},
+        {path: '/conf/:group/:module/:instance/:ifc', component: ConfInterface},
         //  {path: '/:module', component: ConfModule, children: [
         //    {path: '/:instance', component: ConfInstance}          
         //  ]},
